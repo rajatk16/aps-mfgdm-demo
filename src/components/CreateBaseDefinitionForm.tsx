@@ -69,8 +69,8 @@ export const CreateBaseDefinitionForm: FC<CreateBaseDefinitionFormProps> = ({ co
     setLoading(true);
     try {
       await manager.createPropertyDefinition({
-        accountId: 'QmFzZVByb3BlcnRpZXNTdGFnaW5n',
-        groupId: 'QmFzZVByb3BlcnRpZXNHcm91cFN0YWdpbmc',
+        accountId: import.meta.env.VITE_BASE_ACCOUNT_ID,
+        groupId: import.meta.env.VITE_BASE_GROUP_ID,
         collectionId: collectionId,
         data: {
           dataTypeId: formData.dataTypeId,

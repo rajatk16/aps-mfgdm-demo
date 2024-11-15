@@ -31,8 +31,8 @@ export const CreateBaseCollectionForm: FC = () => {
     setLoading(true);
     try {
       const newCollection = await manager.createPropertyDefCollection({
-        accountId: 'QmFzZVByb3BlcnRpZXNTdGFnaW5n',
-        groupId: 'QmFzZVByb3BlcnRpZXNHcm91cFN0YWdpbmc',
+        accountId: import.meta.env.VITE_BASE_ACCOUNT_ID,
+        groupId: import.meta.env.VITE_BASE_GROUP_ID,
         data: {
           collectionId: btoa(formData.name),
           title: formData.name,
@@ -41,8 +41,8 @@ export const CreateBaseCollectionForm: FC = () => {
       });
 
       await manager.updateCollectionPermissions({
-        accountId: 'QmFzZVByb3BlcnRpZXNTdGFnaW5n',
-        groupId: 'QmFzZVByb3BlcnRpZXNHcm91cFN0YWdpbmc',
+        accountId: import.meta.env.VITE_BASE_ACCOUNT_ID,
+        groupId: import.meta.env.VITE_BASE_GROUP_ID,
         collectionId: newCollection.id,
         data: {
           read: {
