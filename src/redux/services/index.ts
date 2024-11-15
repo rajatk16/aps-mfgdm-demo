@@ -1,3 +1,3 @@
 export * from './authAPI';
-export * from './devPortalAPI';
 export * from './userProfileAPI';
+export * from './applicationAPI';

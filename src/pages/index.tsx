@@ -10,4 +10,5 @@ export { UpdateCollection } from './UpdateCollection';
 export { UpdateDefinition } from './UpdateDefinition';
 export { BaseCollectionDetail } from './BaseCollectionDetail';
 export { CreateBaseDefinition } from './CreateBaseDefinition';
+export { CreateBaseCollection } from './CreateBaseCollection';
 export { UpdateBaseDefinition } from './UpdateBaseDefinition';

@@ -18,4 +18,5 @@ export { CreateDefinitionForm } from './CreateDefinitionForm';
 export { UpdateCollectionForm } from './UpdateCollectionForm';
 export { UpdateDefinitionForm } from './UpdateDefinitionForm';
 export { CreateBaseDefinitionForm } from './CreateBaseDefinitionForm';
+export { CreateBaseCollectionForm } from './CreateBaseCollectionForm';
 export { UpdateBaseDefinitionForm } from './UpdateBaseDefinitionForm';

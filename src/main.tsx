@@ -20,7 +20,8 @@ import {
   CreateDefinition,
   UpdateDefinition,
   UpdateBaseDefinition,
-  CreateBaseDefinition
+  CreateBaseDefinition,
+  CreateBaseCollection
 } from './pages';
 
 createRoot(document.getElementById('root')!).render(
@@ -32,6 +33,7 @@ createRoot(document.getElementById('root')!).render(
             <Route index element={<Home />} />
             <Route path="/basecollections" element={<BaseCollections />} />
             <Route path="/basecollections/:baseCollectionId" element={<BaseCollectionDetail />} />
+            <Route path="/create/basecollections" element={<CreateBaseCollection />} />
             <Route
               element={<UpdateBaseDefinition />}
               path="/basecollections/:baseCollectionId/definitions/:definitionId/update"

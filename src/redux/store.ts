@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import { authApi, devPortalApi, userProfileApi } from './services';
+import { applicationApi, authApi, userProfileApi } from './services';
 import {
   authReducer,
   collectionsReducer,
@@ -17,11 +17,11 @@ export const store = configureStore({
     userProfile: userProfileReducer,
     baseCollections: baseCollectionsReducer,
     [authApi.reducerPath]: authApi.reducer,
-    [userProfileApi.reducerPath]: userProfileApi.reducer,
-    [devPortalApi.reducerPath]: devPortalApi.reducer
+    [applicationApi.reducerPath]: applicationApi.reducer,
+    [userProfileApi.reducerPath]: userProfileApi.reducer
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(authApi.middleware, userProfileApi.middleware, devPortalApi.middleware),
+    getDefaultMiddleware().concat(authApi.middleware, userProfileApi.middleware, applicationApi.middleware),
   devTools: true
 });
 

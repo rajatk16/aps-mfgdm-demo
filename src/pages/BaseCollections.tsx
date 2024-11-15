@@ -4,8 +4,8 @@ import { useDispatch } from 'react-redux';
 import { FadeLoader } from 'react-spinners';
 import { PropertyDefCollection } from '@adsk/pim-propertydef-manager';
 
-import { useAppSelector, usePropertyDefManager } from '../hooks';
 import { BackArrowIcon, BaseCollectionsList, ErrorMessage } from '../components';
+import { useAppSelector, usePropertyDefManager, useApplicationAccess } from '../hooks';
 import { setBaseCollections, clearBaseCollections, selectBaseCollectionsAsArray } from '../redux';
 
 export const BaseCollections: FC = () => {
@@ -14,6 +14,8 @@ export const BaseCollections: FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const collections = useAppSelector(selectBaseCollectionsAsArray);
+
+  const { hasAccess, accessLevel } = useApplicationAccess();
 
   useEffect(() => {
     const getCollections = async () => {
@@ -45,6 +47,11 @@ export const BaseCollections: FC = () => {
           </Link>
           <p>Base Property Definition Collections</p>
         </div>
+        {hasAccess && accessLevel === 'OWNER' && (
+          <Link to="/create/baseCollections" className="bg-black text-white px-3 py-2 rounded-lg hover:bg-slate-600">
+            Create Base Collection
+          </Link>
+        )}
       </div>
       {loading ? (
         <div className="h-4/5 flex justify-center items-center">

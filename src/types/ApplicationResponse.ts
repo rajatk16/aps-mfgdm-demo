@@ -1,18 +1,24 @@
 export interface ApplicationResponse {
-  app_id: string;
-  app_name: string;
-  apigee_app_name?: string;
-  approve_date?: string | null;
-  app_type: 'web' | 'mobile' | 'service' | null;
-  callback_url: string;
-  callback_urls: string[];
-  consumer_key: string;
-  created_date?: string;
-  delete_hook_url?: string;
+  id: string;
+  contextId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  name: string;
   description: string;
-  developer: string;
-  gdpr_sys_id?: string;
-  modified_date?: string;
-  site_url?: string;
-  status?: 'approved' | 'pending' | 'rejected';
+  oAuthFlows: {
+    clientType: 'CONFIDENTIAL' | 'PUBLIC';
+    grantType: 'AUTHORIZATION_CODE' | 'CLIENT_CREDENTIALS' | 'IMPLICIT';
+    pkce: 'REQUIRED' | 'OPTIONAL' | 'UNSUPPORTED';
+  }[];
+  jwksUri: string | null;
+  secretCreatedAt: string | null;
+  preparedSecretExpiresAt: string | null;
+  callbackUris: string[];
+  apiProductIds: string[];
+  owner: {
+    userId: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
 }

@@ -2,16 +2,16 @@ import { FadeLoader } from 'react-spinners';
 import { FC, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-import { selectBaseCollectionById, selectClientId, setBasePropertyDefinitions } from '../redux';
-import { useAppDispatch, useAppSelector, usePropertyDefManager } from '../hooks';
+import { selectBaseCollectionById, setBasePropertyDefinitions } from '../redux';
 import { BackArrowIcon, ErrorMessage, BaseDefinitionsList } from '../components';
+import { useAppDispatch, useApplicationAccess, useAppSelector, usePropertyDefManager } from '../hooks';
 import { Button } from '@headlessui/react';
 
 export const BaseCollectionDetail: FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { hasAccess, accessLevel } = useApplicationAccess();
   const manager = usePropertyDefManager();
-  const clientId = useAppSelector(selectClientId);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { baseCollectionId } = useParams<{ baseCollectionId: string }>();
@@ -49,13 +49,15 @@ export const BaseCollectionDetail: FC = () => {
             <p>{atob(baseCollectionId!)}</p>
           </div>
           <div>
-            <Button
-              type="button"
-              onClick={() => navigate(`/basecollections/${baseCollectionId}/createDefinition`)}
-              className="bg-black text-white px-3 py-2 rounded-lg hover:bg-slate-600"
-            >
-              Create Base Property Definition
-            </Button>
+            {hasAccess && accessLevel === 'OWNER' && (
+              <Button
+                type="button"
+                onClick={() => navigate(`/basecollections/${baseCollectionId}/createDefinition`)}
+                className="bg-black text-white px-3 py-2 rounded-lg hover:bg-slate-600"
+              >
+                Create Base Property Definition
+              </Button>
+            )}
           </div>
         </div>
         {loading ? (
@@ -67,7 +69,7 @@ export const BaseCollectionDetail: FC = () => {
         ) : (
           <BaseDefinitionsList
             definitions={baseCollection.definitions ?? []}
-            allowAccess={clientId === baseCollection.createdBy}
+            allowAccess={(hasAccess && (accessLevel === 'EDITOR' || accessLevel === 'OWNER')) ?? false}
           />
         )}
       </div>

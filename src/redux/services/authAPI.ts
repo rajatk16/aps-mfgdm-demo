@@ -45,7 +45,7 @@ export const authApi = createApi({
           body: new URLSearchParams({
             grant_type: 'refresh_token',
             refresh_token,
-            scope: 'data:read data:write data:create data:search internal:read'
+            scope: 'data:read data:write data:create data:search application:client:read'
           })
         })
       }
@@ -61,7 +61,7 @@ export const authApi = createApi({
         },
         body: new URLSearchParams({
           grant_type: 'client_credentials',
-          scope: 'data:read data:write data:create data:search internal:read'
+          scope: 'data:read data:write data:create data:search application:client:read'
         })
       })
     })
