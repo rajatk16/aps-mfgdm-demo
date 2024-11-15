@@ -23,8 +23,8 @@ export const BaseCollectionDetail: FC = () => {
       setError(null);
       try {
         const definitions = await manager.getPropertyDefinitions({
-          accountId: 'QmFzZVByb3BlcnRpZXNTdGFnaW5n',
-          groupId: 'QmFzZVByb3BlcnRpZXNHcm91cFN0YWdpbmc',
+          accountId: import.meta.env.VITE_BASE_ACCOUNT_ID,
+          groupId: import.meta.env.VITE_BASE_GROUP_ID,
           collectionId: baseCollectionId!
         });
         dispatch(setBasePropertyDefinitions({ definitions: definitions.results, collectionId: baseCollectionId! }));
