@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from '@apollo/client';
 
 export const GET_PROPERTY_DEFINITION_COLLECTIONS = gql`
   query GetPropertyDefinitionCollections($cursor: String) {
@@ -12,39 +12,6 @@ export const GET_PROPERTY_DEFINITION_COLLECTIONS = gql`
           id
           name
           description
-        }
-      }
-    }
-  }
-`;
-
-export const GET_BASE_PROPERTY_DEFINITION_COLLECTIONS = gql`
-  query GetBasePropertyDefinitionCollections($pagination: PaginationInput) {
-    hubs(pagination: $pagination) {
-      results {
-        basePropertyDefinitionCollections {
-          results {
-            id
-            name
-            description
-            definitions {
-              results {
-                id
-                name
-                specification
-                units {
-                  id
-                  name
-                }
-                isArchived
-                isHidden
-                shouldCopy
-                isReadOnly
-                description
-                propertyBehavior
-              }
-            }
-          }
         }
       }
     }

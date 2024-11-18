@@ -12,3 +12,4 @@ export { BaseCollectionDetail } from './BaseCollectionDetail';
 export { CreateBaseDefinition } from './CreateBaseDefinition';
 export { CreateBaseCollection } from './CreateBaseCollection';
 export { UpdateBaseDefinition } from './UpdateBaseDefinition';
+export { UpdateBaseCollection } from './UpdateBaseCollection';

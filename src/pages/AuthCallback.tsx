@@ -21,7 +21,7 @@ export const AuthCallback: FC = () => {
         clientId: clientId!,
         clientSecret: clientSecret!,
         code,
-        redirectUri: import.meta.env.VITE_APS_CALLBACK_URL
+        redirectUri: import.meta.env.ADSK_APS_CALLBACK_URL
       }).then(() => {
         navigate('/');
       });

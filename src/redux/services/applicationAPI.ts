@@ -6,7 +6,7 @@ import { ApplicationResponse, CollaboratorsResponse } from '../../types';
 export const applicationApi = createApi({
   reducerPath: 'applicationAPI',
   baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_BASE_URL,
+    baseUrl: import.meta.env.ADSK_BASE_URL,
     prepareHeaders: (headers, { getState }) => {
       const { access_token } = (getState() as RootState).auth.threeLOToken;
       if (access_token) {

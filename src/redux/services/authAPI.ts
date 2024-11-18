@@ -10,7 +10,7 @@ const createAuthHeader = (clientId: string, clientSecret: string) => {
 export const authApi = createApi({
   reducerPath: 'authAPI',
   baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_BASE_URL
+    baseUrl: import.meta.env.ADSK_BASE_URL
   }),
   endpoints: (builder) => ({
     getToken: builder.mutation<

@@ -1,20 +1,25 @@
-import { useNavigate } from 'react-router-dom';
 import { ChangeEvent, FC, useState } from 'react';
 import { Button, Description, Field, Input, Label } from '@headlessui/react';
 
 import { ErrorMessage } from './ErrorMessage';
 import { SuccessMessage } from './SuccessMessage';
+import { PropertyDefCollectionWithDefinitions } from '../redux';
+import { useNavigate } from 'react-router-dom';
 import { usePropertyDefManager } from '../hooks';
 
-export const CreateBaseCollectionForm: FC = () => {
+interface UpdateBaseCollectionFormProps {
+  collection: PropertyDefCollectionWithDefinitions;
+}
+
+export const UpdateBaseCollectionForm: FC<UpdateBaseCollectionFormProps> = ({ collection }) => {
   const navigate = useNavigate();
   const manager = usePropertyDefManager();
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [formData, setFormData] = useState({
-    name: '',
-    description: ''
+    title: collection.title,
+    description: collection.description
   });
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -26,37 +31,23 @@ export const CreateBaseCollectionForm: FC = () => {
   };
 
   const handleFormSubmit = async () => {
-    console.log(formData);
-    setError(null);
     setLoading(true);
+    setError(null);
     try {
-      const newCollection = await manager.createPropertyDefCollection({
+      await manager.updatePropertyDefCollection({
         accountId: import.meta.env.ADSK_BASE_ACCOUNT_ID,
         groupId: import.meta.env.ADSK_BASE_GROUP_ID,
+        collectionId: collection.id,
         data: {
-          collectionId: btoa(formData.name),
-          title: formData.name,
-          description: formData.description
+          description: formData.description,
+          title: formData.title
         }
       });
-
-      await manager.updateCollectionPermissions({
-        accountId: import.meta.env.ADSK_BASE_ACCOUNT_ID,
-        groupId: import.meta.env.ADSK_BASE_GROUP_ID,
-        collectionId: newCollection.id,
-        data: {
-          read: {
-            users: ['*'],
-            services: ['*']
-          }
-        }
-      });
-
-      setSuccess(true);
+      setIsSuccess(true);
     } catch (error) {
-      console.error(`Error creating new base property definition collection`, error);
-      setError('Failed to create new base property definition.');
-      setSuccess(false);
+      console.error(`Error updating collection details`, error);
+      setIsSuccess(false);
+      setError(`Failed to update collection details`);
     } finally {
       setLoading(false);
     }
@@ -66,36 +57,34 @@ export const CreateBaseCollectionForm: FC = () => {
     <>
       <div className="p-4 mx-auto">
         {error && <ErrorMessage />}
-        {success && (
+        {isSuccess && (
           <SuccessMessage
-            message="Base Property Definition Collection created successfully!"
+            message="Collection updated successfully!"
             dismissAction={() => {
               setError(null);
-              setSuccess(false);
+              setIsSuccess(false);
             }}
             nav={{
-              link: '/basecollections',
-              text: 'View Collections'
+              link: `/basecollections/${collection.id}`,
+              text: `View Collection`
             }}
           />
         )}
         <Field>
           <div className="w-full">
-            <Label className="pt-3 text-left text-sm/6 font-small">Name</Label>
+            <Label className="pt-3 text-left text-sm/6 font-small">Title</Label>
             <Input
-              id="id"
-              name="name"
+              id="Title"
+              name="title"
               type="text"
-              value={formData.name}
+              value={formData.title}
               onChange={handleInputChange}
-              className={`block w-full border border-solid border-slate-300 py-1.5 px-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 rounded-sm`}
+              className="block w-full border border-solid border-slate-300 py-1.5 px-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 rounded-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
             />
-            <Description className={'text-sm/6'}>
-              Only alphanumeric characters allowed - Limit 64 characters
-            </Description>
+            <Description className="text-sm/6">Only alphanumeric characters allowed - Limit 64 characters</Description>
           </div>
           <div className="w-full mt-6">
-            <Label className="text-sm/6 font-small">Description (optional)</Label>
+            <Label className="text-sm/6 font-small">Description</Label>
             <Input
               type="text"
               id="description"
@@ -111,17 +100,17 @@ export const CreateBaseCollectionForm: FC = () => {
       <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
         <Button
           type="button"
-          disabled={loading}
           onClick={handleFormSubmit}
+          disabled={loading}
           className="inline-flex w-full justify-center rounded-md bg-black hover:bg-slate-600 disabled:bg-gray-500 disabled:cursor-not-allowed px-3 py-2 text-sm font-semibold text-white shadow-sm sm:ml-3 sm:w-auto"
         >
-          {loading ? 'Loading...' : 'Create Base Property Collection'}
+          {loading ? 'Loading...' : 'Update Collection'}
         </Button>
         <Button
           type="button"
+          onClick={() => navigate(`/basecollections/${collection.id}`)}
           disabled={loading}
-          onClick={() => navigate('/basecollections')}
-          className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto disabled:bg-blue-200 disabled:cursor-not-allowed"
+          className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
         >
           Cancel
         </Button>

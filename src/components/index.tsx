@@ -20,3 +20,4 @@ export { UpdateDefinitionForm } from './UpdateDefinitionForm';
 export { CreateBaseDefinitionForm } from './CreateBaseDefinitionForm';
 export { CreateBaseCollectionForm } from './CreateBaseCollectionForm';
 export { UpdateBaseDefinitionForm } from './UpdateBaseDefinitionForm';
+export { UpdateBaseCollectionForm } from './UpdateBaseCollectionForm';

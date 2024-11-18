@@ -30,8 +30,8 @@ export const UpdateBaseDefinitionForm: FC<UpdateBaseDefinitionFormProps> = ({ de
     setError(null);
     try {
       await manager.updatePropertyDefinitions({
-        accountId: import.meta.env.VITE_BASE_ACCOUNT_ID,
-        groupId: import.meta.env.VITE_BASE_GROUP_ID,
+        accountId: import.meta.env.ADSK_BASE_ACCOUNT_ID,
+        groupId: import.meta.env.ADSK_BASE_GROUP_ID,
         collectionId: definition.collectionId!,
         data: [
           {

@@ -12,7 +12,7 @@ export const useApplicationAccess = () => {
 
   useEffect(() => {
     const checkAccess = async () => {
-      if (!clientId || clientId !== import.meta.env.VITE_BASE_CLIENT_ID) {
+      if (!clientId || clientId !== import.meta.env.ADSK_BASE_CLIENT_ID) {
         return;
       }
 

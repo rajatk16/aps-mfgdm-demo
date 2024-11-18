@@ -23,8 +23,8 @@ export const BaseCollections: FC = () => {
       setError(null);
       try {
         const collections = await manager.getPropertyDefCollections({
-          accountId: import.meta.env.VITE_BASE_ACCOUNT_ID,
-          groupId: import.meta.env.VITE_BASE_GROUP_ID
+          accountId: import.meta.env.ADSK_BASE_ACCOUNT_ID,
+          groupId: import.meta.env.ADSK_BASE_GROUP_ID
         });
         dispatch(clearBaseCollections());
         dispatch(setBaseCollections(collections.results as PropertyDefCollection[]));

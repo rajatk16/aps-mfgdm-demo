@@ -25,9 +25,9 @@ export const useAuth = (): boolean => {
 
   useEffect(() => {
     const redirectToAuth = () => {
-      const redirect_uri = encodeURIComponent(import.meta.env.VITE_APS_CALLBACK_URL);
+      const redirect_uri = encodeURIComponent(import.meta.env.ADSK_APS_CALLBACK_URL);
       const scopes = encodeURIComponent('data:read data:write data:create data:search application:client:read');
-      const authURL = `${import.meta.env.VITE_BASE_URL}/authentication/v2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirect_uri}&scope=${scopes}`;
+      const authURL = `${import.meta.env.ADSK_BASE_URL}/authentication/v2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirect_uri}&scope=${scopes}`;
       window.location.href = authURL;
     };
     const checkAndRefreshToken = async () => {

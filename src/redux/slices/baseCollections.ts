@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { PropertyDefCollection, PropertyDefinition } from '@adsk/pim-propertydef-manager';
 
-interface PropertyDefCollectionWithDefinitions extends PropertyDefCollection {
+export interface PropertyDefCollectionWithDefinitions extends PropertyDefCollection {
   definitions?: PropertyDefinition[];
 }
 

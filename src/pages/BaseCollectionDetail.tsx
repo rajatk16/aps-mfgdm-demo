@@ -23,8 +23,8 @@ export const BaseCollectionDetail: FC = () => {
       setError(null);
       try {
         const definitions = await manager.getPropertyDefinitions({
-          accountId: import.meta.env.VITE_BASE_ACCOUNT_ID,
-          groupId: import.meta.env.VITE_BASE_GROUP_ID,
+          accountId: import.meta.env.ADSK_BASE_ACCOUNT_ID,
+          groupId: import.meta.env.ADSK_BASE_GROUP_ID,
           collectionId: baseCollectionId!
         });
         dispatch(setBasePropertyDefinitions({ definitions: definitions.results, collectionId: baseCollectionId! }));
@@ -48,8 +48,21 @@ export const BaseCollectionDetail: FC = () => {
             </Link>
             <p>{atob(baseCollectionId!)}</p>
           </div>
-          <div>
-            {hasAccess && accessLevel === 'OWNER' && (
+          {hasAccess && accessLevel === 'OWNER' && (
+            <div className="flex gap-x-2">
+              <Button
+                type="button"
+                className="bg-black text-white px-3 py-2 rounded-lg hover:bg-slate-600"
+                onClick={() =>
+                  navigate(`/basecollections/${baseCollectionId}/update`, {
+                    state: {
+                      collection: baseCollection
+                    }
+                  })
+                }
+              >
+                Update Base Collection
+              </Button>
               <Button
                 type="button"
                 onClick={() => navigate(`/basecollections/${baseCollectionId}/createDefinition`)}
@@ -57,8 +70,8 @@ export const BaseCollectionDetail: FC = () => {
               >
                 Create Base Property Definition
               </Button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
         {loading ? (
           <div className="h-4/5 flex justify-center items-center">

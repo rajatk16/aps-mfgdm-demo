@@ -10,7 +10,7 @@ export const usePropertyDefManager = () => {
 
   const manager = useMemo(() => {
     return new PropertyDefManager({
-      baseURL: `${import.meta.env.VITE_PARAMETER_SERVICE_URL}`,
+      baseURL: `${import.meta.env.ADSK_PARAMETER_SERVICE_URL}`,
       getToken: async () => {
         try {
           const response = await getTwoLOToken({
