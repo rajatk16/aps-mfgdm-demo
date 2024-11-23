@@ -1,17 +1,40 @@
+import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { ChangeEvent, FC, useState } from 'react';
 import { Button, Description, Field, Input, Label, Select, Switch } from '@headlessui/react';
 
 import { ErrorMessage } from './ErrorMessage';
-import { useAppSelector, useAuth } from '../hooks';
-import { CREATE_PROPERTY_DEFINITION } from '../graphql';
-import { selectClientId, selectThreeLOAuth } from '../redux';
 import { SuccessMessage } from './SuccessMessage';
-import { Link } from 'react-router-dom';
+import { useAppSelector, useAuth } from '../hooks';
+import { selectClientId, selectThreeLOAuth } from '../redux';
+import { graphql } from '../gql';
+import { PropertyBehaviorEnum } from '../gql/graphql';
 
 interface CreateDefinitionFormProps {
   collectionId: string;
 }
+
+const CREATE_PROPERTY_DEFINITION = graphql(`
+  mutation CreatePropertyDefinition($input: CreatePropertyDefinitionInput!) {
+    createPropertyDefinition(input: $input) {
+      propertyDefinition {
+        id
+        name
+        specification
+        units {
+          id
+          name
+        }
+        isArchived
+        isHidden
+        shouldCopy
+        isReadOnly
+        description
+        propertyBehavior
+      }
+    }
+  }
+`);
 
 export const CreateDefinitionForm: FC<CreateDefinitionFormProps> = ({ collectionId }) => {
   const isAuthorized = useAuth();
@@ -23,7 +46,7 @@ export const CreateDefinitionForm: FC<CreateDefinitionFormProps> = ({ collection
     name: '',
     description: '',
     type: 'STRING',
-    behavior: 'DYNAMIC',
+    behavior: PropertyBehaviorEnum.Dynamic,
     isHidden: false,
     isReadOnly: false,
     shouldCopy: false
@@ -160,10 +183,10 @@ export const CreateDefinitionForm: FC<CreateDefinitionFormProps> = ({ collection
                 onChange={handleSelectChange}
                 className="block w-full py-2 pl-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
               >
-                <option value="STANDARD">Standard</option>
-                <option value="DYNAMIC_AT_VERSION">Dynamic at version</option>
-                <option value="DYNAMIC">Dynamic</option>
-                <option value="TIMELESS">Timeless</option>
+                <option value={PropertyBehaviorEnum.Standard}>Standard</option>
+                <option value={PropertyBehaviorEnum.DynamicAtVersion}>Dynamic at version</option>
+                <option value={PropertyBehaviorEnum.Dynamic}>Dynamic</option>
+                <option value={PropertyBehaviorEnum.Timeless}>Timeless</option>
               </Select>
             </div>
           </div>

@@ -8,16 +8,19 @@ import {
   selectThreeLOAuth,
   selectClientSecret,
   selectHasValidCredentials,
-  useGetRefreshToken
+  useGetRefreshToken,
+  selectAPSCallbackUrl,
+  selectBaseUrl
 } from '../redux';
 
 export const useAuth = (): boolean => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-
+  const BASE_URL = useAppSelector(selectBaseUrl) ?? '';
   const clientId = useAppSelector(selectClientId);
   const tokenState = useAppSelector(selectThreeLOAuth);
   const clientSecret = useAppSelector(selectClientSecret);
+  const APS_CALLBACK_URL = useAppSelector(selectAPSCallbackUrl) ?? '';
   const hasValidCredentials = useAppSelector(selectHasValidCredentials);
 
   const [getRefreshToken] = useGetRefreshToken();
@@ -25,9 +28,9 @@ export const useAuth = (): boolean => {
 
   useEffect(() => {
     const redirectToAuth = () => {
-      const redirect_uri = encodeURIComponent(import.meta.env.ADSK_APS_CALLBACK_URL);
+      const redirect_uri = encodeURIComponent(APS_CALLBACK_URL);
       const scopes = encodeURIComponent('data:read data:write data:create data:search application:client:read');
-      const authURL = `${import.meta.env.ADSK_BASE_URL}/authentication/v2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirect_uri}&scope=${scopes}`;
+      const authURL = `${BASE_URL}/authentication/v2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirect_uri}&scope=${scopes}`;
       window.location.href = authURL;
     };
     const checkAndRefreshToken = async () => {
@@ -64,7 +67,17 @@ export const useAuth = (): boolean => {
     };
 
     checkAndRefreshToken();
-  }, [clientId, clientSecret, dispatch, getRefreshToken, hasValidCredentials, navigate, tokenState]);
+  }, [
+    APS_CALLBACK_URL,
+    BASE_URL,
+    clientId,
+    clientSecret,
+    dispatch,
+    getRefreshToken,
+    hasValidCredentials,
+    navigate,
+    tokenState
+  ]);
 
   return isAuthorized;
 };

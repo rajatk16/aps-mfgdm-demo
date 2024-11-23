@@ -1,11 +1,11 @@
+import { useNavigate } from 'react-router-dom';
 import { ChangeEvent, FC, useState } from 'react';
 import { Button, Description, Field, Input, Label } from '@headlessui/react';
 
 import { ErrorMessage } from './ErrorMessage';
 import { SuccessMessage } from './SuccessMessage';
-import { PropertyDefCollectionWithDefinitions } from '../redux';
-import { useNavigate } from 'react-router-dom';
-import { usePropertyDefManager } from '../hooks';
+import { PropertyDefCollectionWithDefinitions, selectBaseAccountId, selectBaseGroupId } from '../redux';
+import { useAppSelector, usePropertyDefManager } from '../hooks';
 
 interface UpdateBaseCollectionFormProps {
   collection: PropertyDefCollectionWithDefinitions;
@@ -13,6 +13,8 @@ interface UpdateBaseCollectionFormProps {
 
 export const UpdateBaseCollectionForm: FC<UpdateBaseCollectionFormProps> = ({ collection }) => {
   const navigate = useNavigate();
+  const baseAccountId = useAppSelector(selectBaseAccountId) ?? '';
+  const baseGroupId = useAppSelector(selectBaseGroupId) ?? '';
   const manager = usePropertyDefManager();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,8 +37,8 @@ export const UpdateBaseCollectionForm: FC<UpdateBaseCollectionFormProps> = ({ co
     setError(null);
     try {
       await manager.updatePropertyDefCollection({
-        accountId: import.meta.env.ADSK_BASE_ACCOUNT_ID,
-        groupId: import.meta.env.ADSK_BASE_GROUP_ID,
+        accountId: baseAccountId,
+        groupId: baseGroupId,
         collectionId: collection.id,
         data: {
           description: formData.description,

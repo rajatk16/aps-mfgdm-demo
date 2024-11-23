@@ -4,11 +4,14 @@ import { Button, Description, Field, Input, Label } from '@headlessui/react';
 
 import { ErrorMessage } from './ErrorMessage';
 import { SuccessMessage } from './SuccessMessage';
-import { usePropertyDefManager } from '../hooks';
+import { useAppSelector, usePropertyDefManager } from '../hooks';
+import { selectBaseAccountId, selectBaseGroupId } from '../redux';
 
 export const CreateBaseCollectionForm: FC = () => {
   const navigate = useNavigate();
   const manager = usePropertyDefManager();
+  const baseGroupId = useAppSelector(selectBaseGroupId) ?? '';
+  const baseAccountId = useAppSelector(selectBaseAccountId) ?? '';
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -26,13 +29,12 @@ export const CreateBaseCollectionForm: FC = () => {
   };
 
   const handleFormSubmit = async () => {
-    console.log(formData);
     setError(null);
     setLoading(true);
     try {
       const newCollection = await manager.createPropertyDefCollection({
-        accountId: import.meta.env.ADSK_BASE_ACCOUNT_ID,
-        groupId: import.meta.env.ADSK_BASE_GROUP_ID,
+        accountId: baseAccountId,
+        groupId: baseGroupId,
         data: {
           collectionId: btoa(formData.name),
           title: formData.name,
@@ -41,8 +43,8 @@ export const CreateBaseCollectionForm: FC = () => {
       });
 
       await manager.updateCollectionPermissions({
-        accountId: import.meta.env.ADSK_BASE_ACCOUNT_ID,
-        groupId: import.meta.env.ADSK_BASE_GROUP_ID,
+        accountId: baseAccountId,
+        groupId: baseGroupId,
         collectionId: newCollection.id,
         data: {
           read: {

@@ -4,10 +4,45 @@ import { FadeLoader } from 'react-spinners';
 import { useLazyQuery } from '@apollo/client';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-import { GET_PROPERTY_DEFINITIONS } from '../graphql';
+import { graphql } from '../gql';
 import { useAppDispatch, useAppSelector, useAuth } from '../hooks';
 import { BackArrowIcon, DefinitionsList, ErrorMessage } from '../components';
 import { selectClientId, selectCollectionById, selectThreeLOAuth, updateCollection } from '../redux';
+
+const GET_PROPERTY_DEFINITIONS = graphql(`
+  query Application($filter: PropertyDefinitionCollectionFilterInput, $pagination: PaginationInput) {
+    application {
+      propertyDefinitionCollections(filter: $filter) {
+        results {
+          id
+          name
+          description
+          definitions(pagination: $pagination) {
+            pagination {
+              cursor
+              pageSize
+            }
+            results {
+              id
+              name
+              specification
+              units {
+                id
+                name
+              }
+              isArchived
+              isHidden
+              shouldCopy
+              isReadOnly
+              description
+              propertyBehavior
+            }
+          }
+        }
+      }
+    }
+  }
+`);
 
 export const CollectionDetail: FC = () => {
   const navigate = useNavigate();
@@ -18,7 +53,7 @@ export const CollectionDetail: FC = () => {
   const { access_token } = useAppSelector(selectThreeLOAuth);
   const { collectionId } = useParams<{ collectionId: string }>();
   const collection = useAppSelector(selectCollectionById(btoa(`propdefcol~${clientId}~${clientId}~${collectionId}`)));
-  const definitions = collection?.definitions || [];
+  const definitions = collection?.definitions?.results || [];
 
   const [getPropertyDefinitions, { data, loading, error }] = useLazyQuery(GET_PROPERTY_DEFINITIONS);
 
@@ -32,7 +67,7 @@ export const CollectionDetail: FC = () => {
         },
         variables: {
           filter: {
-            id: btoa(`propdefcol~${clientId}~${clientId}~${collectionId}`)
+            id: [btoa(`propdefcol~${clientId}~${clientId}~${collectionId}`)]
           }
         }
       });
@@ -40,10 +75,10 @@ export const CollectionDetail: FC = () => {
   }, [access_token, clientId, collectionId, getPropertyDefinitions, isAuthorized]);
 
   useEffect(() => {
-    if (data?.application.propertyDefinitionCollections?.results && collectionId) {
+    if (data?.application?.propertyDefinitionCollections?.results[0] && collectionId) {
       dispatch(
         updateCollection({
-          collection: data?.application.propertyDefinitionCollections?.results[0]
+          collection: data.application.propertyDefinitionCollections.results[0]
         })
       );
     }

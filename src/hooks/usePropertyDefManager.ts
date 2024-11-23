@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { selectClientId, selectClientSecret, useGetTwoLOToken } from '../redux';
+import { selectClientId, selectClientSecret, selectParameterServiceUrl, useGetTwoLOToken } from '../redux';
 import { PropertyDefManager } from '@adsk/pim-propertydef-manager';
 import { useAppSelector } from './useAppSelector';
 
@@ -7,10 +7,11 @@ export const usePropertyDefManager = () => {
   const [getTwoLOToken] = useGetTwoLOToken();
   const clientId = useAppSelector(selectClientId);
   const clientSecret = useAppSelector(selectClientSecret);
+  const PARAMETER_SERVICE_URL = useAppSelector(selectParameterServiceUrl) ?? '';
 
   const manager = useMemo(() => {
     return new PropertyDefManager({
-      baseURL: `${import.meta.env.ADSK_PARAMETER_SERVICE_URL}`,
+      baseURL: `${PARAMETER_SERVICE_URL}`,
       getToken: async () => {
         try {
           const response = await getTwoLOToken({
@@ -30,7 +31,7 @@ export const usePropertyDefManager = () => {
       },
       logErrorsOnly: true
     });
-  }, [clientId, clientSecret, getTwoLOToken]);
+  }, [clientId, clientSecret, getTwoLOToken, PARAMETER_SERVICE_URL]);
 
   return manager;
 };

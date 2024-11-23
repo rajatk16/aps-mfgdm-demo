@@ -6,7 +6,13 @@ import { PropertyDefCollection } from '@adsk/pim-propertydef-manager';
 
 import { BackArrowIcon, BaseCollectionsList, ErrorMessage } from '../components';
 import { useAppSelector, usePropertyDefManager, useApplicationAccess } from '../hooks';
-import { setBaseCollections, clearBaseCollections, selectBaseCollectionsAsArray } from '../redux';
+import {
+  setBaseCollections,
+  clearBaseCollections,
+  selectBaseCollectionsAsArray,
+  selectBaseAccountId,
+  selectBaseGroupId
+} from '../redux';
 
 export const BaseCollections: FC = () => {
   const dispatch = useDispatch();
@@ -14,6 +20,8 @@ export const BaseCollections: FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const collections = useAppSelector(selectBaseCollectionsAsArray);
+  const baseAccountId = useAppSelector(selectBaseAccountId) ?? '';
+  const baseGroupId = useAppSelector(selectBaseGroupId) ?? '';
 
   const { hasAccess, accessLevel } = useApplicationAccess();
 
@@ -23,8 +31,8 @@ export const BaseCollections: FC = () => {
       setError(null);
       try {
         const collections = await manager.getPropertyDefCollections({
-          accountId: import.meta.env.ADSK_BASE_ACCOUNT_ID,
-          groupId: import.meta.env.ADSK_BASE_GROUP_ID
+          accountId: baseAccountId,
+          groupId: baseGroupId
         });
         dispatch(clearBaseCollections());
         dispatch(setBaseCollections(collections.results as PropertyDefCollection[]));

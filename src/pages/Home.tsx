@@ -1,13 +1,31 @@
 import { FC, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@headlessui/react';
 import { FadeLoader } from 'react-spinners';
 import { useLazyQuery } from '@apollo/client';
 
+import { graphql } from '../gql';
 import { CollectionsList, ErrorMessage } from '../components';
-import { GET_PROPERTY_DEFINITION_COLLECTIONS } from '../graphql';
 import { useAuth, useAppDispatch, useAppSelector } from '../hooks';
 import { selectCollectionsAsArray, selectCursor, selectThreeLOAuth, setCollections, setPagination } from '../redux';
-import { Link } from 'react-router-dom';
+
+const GET_PROPERTY_DEFINITION_COLLECTIONS = graphql(`
+  query GetPropertyDefinitionCollections($cursor: String) {
+    application {
+      propertyDefinitionCollections(pagination: { cursor: $cursor }) {
+        pagination {
+          cursor
+          pageSize
+        }
+        results {
+          id
+          name
+          description
+        }
+      }
+    }
+  }
+`);
 
 export const Home: FC = () => {
   const isAuthorized = useAuth();
@@ -37,6 +55,8 @@ export const Home: FC = () => {
   useEffect(() => {
     if (data?.application?.propertyDefinitionCollections?.results) {
       dispatch(setCollections(data.application.propertyDefinitionCollections.results));
+    }
+    if (data?.application?.propertyDefinitionCollections.pagination) {
       dispatch(setPagination({ cursor: data.application.propertyDefinitionCollections.pagination.cursor }));
     }
   }, [data, dispatch]);
@@ -46,11 +66,10 @@ export const Home: FC = () => {
       fetchMore({
         variables: { cursor },
         updateQuery: (prevResult, { fetchMoreResult }) => {
-          if (!fetchMoreResult) return prevResult;
-          const newCollections = fetchMoreResult.application.propertyDefinitionCollections.results;
-          const newCursor = fetchMoreResult.application.propertyDefinitionCollections.pagination.cursor;
+          const newCollections = fetchMoreResult.application?.propertyDefinitionCollections.results ?? [];
+          const newCursor = fetchMoreResult.application?.propertyDefinitionCollections?.pagination?.cursor;
           dispatch(
-            setCollections([...prevResult.application.propertyDefinitionCollections.results, ...newCollections])
+            setCollections([...prevResult.application!.propertyDefinitionCollections.results, ...newCollections])
           );
           dispatch(setPagination({ cursor: newCursor }));
           return fetchMoreResult;

@@ -2,7 +2,7 @@ import { FadeLoader } from 'react-spinners';
 import { FC, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-import { selectBaseCollectionById, setBasePropertyDefinitions } from '../redux';
+import { selectBaseAccountId, selectBaseCollectionById, selectBaseGroupId, setBasePropertyDefinitions } from '../redux';
 import { BackArrowIcon, ErrorMessage, BaseDefinitionsList } from '../components';
 import { useAppDispatch, useApplicationAccess, useAppSelector, usePropertyDefManager } from '../hooks';
 import { Button } from '@headlessui/react';
@@ -10,6 +10,8 @@ import { Button } from '@headlessui/react';
 export const BaseCollectionDetail: FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const baseAccountId = useAppSelector(selectBaseAccountId) ?? '';
+  const baseGroupId = useAppSelector(selectBaseGroupId) ?? '';
   const { hasAccess, accessLevel } = useApplicationAccess();
   const manager = usePropertyDefManager();
   const [loading, setLoading] = useState<boolean>(true);
@@ -23,8 +25,8 @@ export const BaseCollectionDetail: FC = () => {
       setError(null);
       try {
         const definitions = await manager.getPropertyDefinitions({
-          accountId: import.meta.env.ADSK_BASE_ACCOUNT_ID,
-          groupId: import.meta.env.ADSK_BASE_GROUP_ID,
+          accountId: baseAccountId,
+          groupId: baseGroupId,
           collectionId: baseCollectionId!
         });
         dispatch(setBasePropertyDefinitions({ definitions: definitions.results, collectionId: baseCollectionId! }));
@@ -36,7 +38,7 @@ export const BaseCollectionDetail: FC = () => {
       }
     };
     getDefinitions();
-  }, [baseCollectionId, dispatch, manager]);
+  }, [baseAccountId, baseCollectionId, baseGroupId, dispatch, manager]);
 
   return (
     <div className="mx-auto h-screen">

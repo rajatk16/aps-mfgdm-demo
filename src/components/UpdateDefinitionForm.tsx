@@ -1,18 +1,40 @@
+import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { ChangeEvent, FC, useState } from 'react';
 import { Button, Description, Field, Input, Label, Select, Switch } from '@headlessui/react';
 
+import { graphql } from '../gql';
 import { PropertyDef } from '../types';
-import { UPDATE_PROPERTY_DEFINITION } from '../graphql';
 import { useAppSelector } from '../hooks';
 import { selectThreeLOAuth } from '../redux';
 import { ErrorMessage } from './ErrorMessage';
 import { SuccessMessage } from './SuccessMessage';
-import { Link } from 'react-router-dom';
 
 interface UpdateDefinitionFormProps {
   definition: PropertyDef;
 }
+
+const UPDATE_PROPERTY_DEFINITION = graphql(`
+  mutation UpdatePropertyDefinition($input: UpdatePropertyDefinitionInput!) {
+    updatePropertyDefinition(input: $input) {
+      propertyDefinition {
+        id
+        name
+        specification
+        units {
+          id
+          name
+        }
+        isArchived
+        isHidden
+        shouldCopy
+        isReadOnly
+        description
+        propertyBehavior
+      }
+    }
+  }
+`);
 
 export const UpdateDefinitionForm: FC<UpdateDefinitionFormProps> = ({ definition }) => {
   const { access_token } = useAppSelector(selectThreeLOAuth);

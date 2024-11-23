@@ -5,8 +5,9 @@ import { PropertyBehavior, PropertyCategory, PropertyDMBehavior } from '@adsk/pi
 import { Button, Description, Field, Input, Label, Select, Switch } from '@headlessui/react';
 
 import { ErrorMessage } from './ErrorMessage';
-import { usePropertyDefManager } from '../hooks';
+import { useAppSelector, usePropertyDefManager } from '../hooks';
 import { SuccessMessage } from './SuccessMessage';
+import { selectBaseAccountId, selectBaseGroupId } from '../redux';
 
 interface CreateBaseDefinitionFormProps {
   collectionId: string;
@@ -14,6 +15,8 @@ interface CreateBaseDefinitionFormProps {
 
 export const CreateBaseDefinitionForm: FC<CreateBaseDefinitionFormProps> = ({ collectionId }) => {
   const manager = usePropertyDefManager();
+  const baseAccountId = useAppSelector(selectBaseAccountId) ?? '';
+  const baseGroupId = useAppSelector(selectBaseGroupId) ?? '';
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -69,8 +72,8 @@ export const CreateBaseDefinitionForm: FC<CreateBaseDefinitionFormProps> = ({ co
     setLoading(true);
     try {
       await manager.createPropertyDefinition({
-        accountId: import.meta.env.ADSK_BASE_ACCOUNT_ID,
-        groupId: import.meta.env.ADSK_BASE_GROUP_ID,
+        accountId: baseAccountId,
+        groupId: baseGroupId,
         collectionId: collectionId,
         data: {
           dataTypeId: formData.dataTypeId,

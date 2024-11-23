@@ -3,11 +3,23 @@ import { useNavigate } from 'react-router-dom';
 import { ChangeEvent, FC, useState } from 'react';
 import { Button, Description, Field, Input, Label } from '@headlessui/react';
 
+import { graphql } from '../gql';
 import { selectThreeLOAuth } from '../redux';
 import { ErrorMessage } from './ErrorMessage';
 import { SuccessMessage } from './SuccessMessage';
 import { useAppSelector, useAuth } from '../hooks';
-import { CREATE_PROPERTY_DEFINITION_COLLECTION } from '../graphql';
+
+const CREATE_PROPERTY_DEFINITION_COLLECTION = graphql(`
+  mutation CreatePropertyDefinitionCollection($name: String!, $description: String!) {
+    createPropertyDefinitionCollection(input: { name: $name, description: $description }) {
+      propertyDefinitionCollection {
+        id
+        name
+        description
+      }
+    }
+  }
+`);
 
 export const CreateCollectionForm: FC = () => {
   const isAuthorized = useAuth();

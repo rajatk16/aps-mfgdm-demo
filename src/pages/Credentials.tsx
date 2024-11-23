@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { FC, useEffect, useState } from 'react';
-import { Button, Description, Field, Input, Label } from '@headlessui/react';
+import { ChangeEvent, FC, FormEvent, useEffect, useState } from 'react';
+import { Button, Description, Field, Input, Label, Select } from '@headlessui/react';
 
 import { useAppDispatch } from '../hooks';
 import {
@@ -16,9 +16,14 @@ import {
 export const Credentials: FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    clientId: string;
+    clientSecret: string;
+    env: 'STAGING' | 'DEV' | 'PRODUCTION';
+  }>({
     clientId: '',
-    clientSecret: ''
+    clientSecret: '',
+    env: 'STAGING'
   });
 
   useEffect(() => {
@@ -30,7 +35,7 @@ export const Credentials: FC = () => {
     dispatch(clearTwoLOToken());
   }, [dispatch]);
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -38,20 +43,28 @@ export const Credentials: FC = () => {
     }));
   };
 
-  const submitCredentials = async (event: React.FormEvent<HTMLFormElement>) => {
+  const submitCredentials = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (formData.clientId && formData.clientSecret) {
       dispatch(
         setCredentials({
+          env: formData.env,
           clientId: formData.clientId,
           clientSecret: formData.clientSecret,
           hasValidCredentials: true
         })
       );
-
-      navigate('/');
     }
+    navigate('/');
+  };
+
+  const handleSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = event.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value
+    }));
   };
 
   return (
@@ -88,6 +101,22 @@ export const Credentials: FC = () => {
         <form className="mx-auto" onSubmit={submitCredentials}>
           <Field>
             <div className="w-full">
+              <Label htmlFor="env" className="block text-sm font-medium leading-6 text-gray-900">
+                Type
+              </Label>
+              <Select
+                id="env"
+                name="env"
+                value={formData.env}
+                onChange={handleSelectChange}
+                className="block w-full py-2 pl-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+              >
+                <option value="DEV">DEVELOPMENT</option>
+                <option value="STAGING">STAGING</option>
+                <option value="PRODUCTION">PRODUCTION</option>
+              </Select>
+            </div>
+            <div className="w-full mt-6">
               <Label className="pt-3 pb-3 text-sm/6 font-small">Client ID</Label>
               <Input
                 type="text"

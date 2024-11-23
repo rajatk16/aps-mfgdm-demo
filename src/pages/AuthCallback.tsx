@@ -4,11 +4,13 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { ErrorMessage } from '../components';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { selectClientId, selectClientSecret, useGetToken } from '../redux';
+import { selectAPSCallbackUrl, selectClientId, selectClientSecret, useGetToken } from '../redux';
+import { useSelector } from 'react-redux';
 
 export const AuthCallback: FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const APS_CALLBACK_URL = useSelector(selectAPSCallbackUrl) ?? '';
   const [searchParams] = useSearchParams();
   const clientId = useAppSelector(selectClientId);
   const [getToken, { isLoading, error }] = useGetToken();
@@ -21,12 +23,12 @@ export const AuthCallback: FC = () => {
         clientId: clientId!,
         clientSecret: clientSecret!,
         code,
-        redirectUri: import.meta.env.ADSK_APS_CALLBACK_URL
+        redirectUri: APS_CALLBACK_URL
       }).then(() => {
         navigate('/');
       });
     }
-  }, [clientId, clientSecret, dispatch, getToken, navigate, searchParams]);
+  }, [APS_CALLBACK_URL, clientId, clientSecret, dispatch, getToken, navigate, searchParams]);
 
   if (isLoading)
     return (

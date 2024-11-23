@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { selectClientId, selectProfile, useGetApplication, useGetCollaborators } from '../redux';
+import { selectBaseClientId, selectClientId, selectProfile, useGetApplication, useGetCollaborators } from '../redux';
 import { useAppSelector } from './useAppSelector';
 
 export const useApplicationAccess = () => {
@@ -7,12 +7,13 @@ export const useApplicationAccess = () => {
   const profile = useAppSelector(selectProfile);
   const clientId = useAppSelector(selectClientId);
   const [getCollaborators] = useGetCollaborators();
+  const baseClientId = useAppSelector(selectBaseClientId);
   const [hasAccess, setHasAccess] = useState<boolean>(false);
   const [accessLevel, setAccessLevel] = useState<'OWNER' | 'EDITOR' | 'VIEWER' | null>(null);
 
   useEffect(() => {
     const checkAccess = async () => {
-      if (!clientId || clientId !== import.meta.env.ADSK_BASE_CLIENT_ID) {
+      if (!clientId || !baseClientId || clientId !== baseClientId) {
         return;
       }
 
@@ -46,7 +47,7 @@ export const useApplicationAccess = () => {
     };
 
     checkAccess();
-  }, [clientId, getApplication, getCollaborators, profile]);
+  }, [baseClientId, clientId, getApplication, getCollaborators, profile]);
 
   return { hasAccess, accessLevel };
 };

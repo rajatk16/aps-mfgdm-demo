@@ -4,8 +4,9 @@ import { Button, Description, Field, Input, Label, Select, Switch } from '@headl
 import { PropertyDefinition, PropertyDMBehavior, PropertyCategory, MetaDataId } from '@adsk/pim-propertydef-manager';
 
 import { ErrorMessage } from './ErrorMessage';
+import { selectBaseAccountId, selectBaseGroupId } from '../redux';
 import { SuccessMessage } from './SuccessMessage';
-import { usePropertyDefManager } from '../hooks';
+import { useAppSelector, usePropertyDefManager } from '../hooks';
 
 interface UpdateBaseDefinitionFormProps {
   definition: PropertyDefinition;
@@ -13,6 +14,8 @@ interface UpdateBaseDefinitionFormProps {
 
 export const UpdateBaseDefinitionForm: FC<UpdateBaseDefinitionFormProps> = ({ definition }) => {
   const manager = usePropertyDefManager();
+  const baseAccountId = useAppSelector(selectBaseAccountId) ?? '';
+  const baseGroupId = useAppSelector(selectBaseGroupId) ?? '';
   const [formData, setFormData] = useState({
     description: definition.description,
     isHidden: definition.isHidden,
@@ -30,8 +33,8 @@ export const UpdateBaseDefinitionForm: FC<UpdateBaseDefinitionFormProps> = ({ de
     setError(null);
     try {
       await manager.updatePropertyDefinitions({
-        accountId: import.meta.env.ADSK_BASE_ACCOUNT_ID,
-        groupId: import.meta.env.ADSK_BASE_GROUP_ID,
+        accountId: baseAccountId,
+        groupId: baseGroupId,
         collectionId: definition.collectionId!,
         data: [
           {

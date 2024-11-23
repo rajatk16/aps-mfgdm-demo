@@ -1,5 +1,7 @@
+import type { BaseQueryFn } from '@reduxjs/toolkit/query/react';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+import type { RootState } from '../store';
 import { TokenResponse } from '../../types';
 
 const createAuthHeader = (clientId: string, clientSecret: string) => {
@@ -7,11 +9,29 @@ const createAuthHeader = (clientId: string, clientSecret: string) => {
   return `Basic ${btoa(credentials)}`;
 };
 
+const dynamicBaseQuery: BaseQueryFn<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  string | { url: string; method: string; headers?: Record<string, string>; body?: any },
+  unknown,
+  unknown
+> = async (args, api, extraOptions) => {
+  const state = api.getState() as RootState;
+  const baseUrl = state.credentials.BASE_URL;
+
+  if (!baseUrl) {
+    throw new Error(`BASE_URL is not defined in the credentials state.`);
+  }
+
+  const rawBaseQuery = fetchBaseQuery({
+    baseUrl
+  });
+
+  return rawBaseQuery(args, api, extraOptions);
+};
+
 export const authApi = createApi({
   reducerPath: 'authAPI',
-  baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.ADSK_BASE_URL
-  }),
+  baseQuery: dynamicBaseQuery,
   endpoints: (builder) => ({
     getToken: builder.mutation<
       TokenResponse,

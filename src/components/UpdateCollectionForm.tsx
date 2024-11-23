@@ -3,16 +3,28 @@ import { useMutation } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import { ChangeEvent, FC, useState } from 'react';
 
+import { graphql } from '../gql';
 import { Collection } from '../types';
 import { selectThreeLOAuth } from '../redux';
 import { ErrorMessage } from './ErrorMessage';
 import { SuccessMessage } from './SuccessMessage';
 import { useAppSelector, useAuth } from '../hooks';
-import { UPDATE_PROPERTY_DEFINITION_COLLECTION } from '../graphql';
 
 interface UpdateCollectionFormProps {
   collection: Collection;
 }
+
+const UPDATE_PROPERTY_DEFINITION_COLLECTION = graphql(`
+  mutation UpdatePropertyDefinitionCollection($input: UpdatePropertyDefinitionCollectionInput!) {
+    updatePropertyDefinitionCollection(input: $input) {
+      propertyDefinitionCollection {
+        id
+        name
+        description
+      }
+    }
+  }
+`);
 
 const decodeAndExtract = (input: string): string => {
   return atob(input).split('~').pop() || '';
@@ -25,7 +37,7 @@ export const UpdateCollectionForm: FC<UpdateCollectionFormProps> = ({ collection
   const [updateCollection, { data, loading, error, reset }] = useMutation(UPDATE_PROPERTY_DEFINITION_COLLECTION);
 
   const [formData, setFormData] = useState({
-    description: collection.description
+    description: collection.description ?? ''
   });
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {

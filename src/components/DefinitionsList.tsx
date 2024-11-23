@@ -3,7 +3,7 @@ import { Button } from '@headlessui/react';
 import { useMutation } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 
-import { PropertyDef } from '../types';
+import { graphql } from '../gql';
 import { TableHead } from './TableHead';
 import { TableData } from './TableData';
 import { useAppSelector } from '../hooks';
@@ -11,11 +11,33 @@ import { UpdateIcon } from './UpdateIcon';
 import { ArchiveIcon } from './ArchiveIcon';
 import { selectThreeLOAuth } from '../redux';
 import { EmptyMessage } from './EmptyMessage';
-import { ARCHIVE_PROPERTY_DEFINITION } from '../graphql';
+import { PropertyDefinition } from '../gql/graphql';
 
 interface DefinitionsListProps {
-  definitions: PropertyDef[];
+  definitions: (PropertyDefinition | null)[];
 }
+
+const ARCHIVE_PROPERTY_DEFINITION = graphql(`
+  mutation ArchivePropertyDefinition($input: ArchivePropertyDefinitionInput!) {
+    archivePropertyDefinition(input: $input) {
+      propertyDefinition {
+        id
+        name
+        specification
+        units {
+          id
+          name
+        }
+        isArchived
+        isHidden
+        shouldCopy
+        isReadOnly
+        description
+        propertyBehavior
+      }
+    }
+  }
+`);
 
 export const DefinitionsList: FC<DefinitionsListProps> = ({ definitions }) => {
   const navigate = useNavigate();
@@ -37,11 +59,11 @@ export const DefinitionsList: FC<DefinitionsListProps> = ({ definitions }) => {
     });
 
     if (error) {
-      console.log('Failed to archive property definition', error);
+      console.error('Failed to archive property definition', error);
     }
   };
 
-  const handleNav = (definition: PropertyDef) => {
+  const handleNav = (definition: PropertyDefinition) => {
     const definitionParts = atob(definition.id).split('~');
 
     navigate(`/collections/${definitionParts[3]}/definitions/${definitionParts[4]}/update`, {
@@ -76,35 +98,37 @@ export const DefinitionsList: FC<DefinitionsListProps> = ({ definitions }) => {
                 ]}
               />
               <tbody className="divide-y divide-gray-200">
-                {definitions.map((definition) => (
-                  <tr key={definition.id} className="even:bg-gray-50">
-                    <TableData tableData={definition.name} />
-                    <TableData tableData={definition.description} />
-                    <TableData tableData={definition.specification} />
-                    <TableData tableData={definition.units?.name} />
-                    <TableData tableData={definition.propertyBehavior} />
-                    <TableData tableData={definition.isArchived ? 'Yes' : 'No'} />
-                    <TableData tableData={definition.isHidden ? 'Yes' : 'No'} />
-                    <TableData tableData={definition.isReadOnly ? 'Yes' : 'No'} />
-                    <TableData tableData={definition.shouldCopy ? 'Yes' : 'No'} />
-                    <TableData
-                      actionItem={
-                        <>
-                          <Button disabled={loading} onClick={() => handleNav(definition)}>
-                            <UpdateIcon className="size-6 transition-transform duration-300 hover:scale-125" />
-                          </Button>
-                          <Button disabled={loading} onClick={() => handleArchivePropDef(definition.id)}>
-                            {loading ? (
-                              'Loading...'
-                            ) : (
-                              <ArchiveIcon className="size-6 cursor-pointer transition-transform duration-300 hover:scale-125" />
-                            )}
-                          </Button>
-                        </>
-                      }
-                    />
-                  </tr>
-                ))}
+                {definitions
+                  .filter((definition) => definition !== null)
+                  .map((definition) => (
+                    <tr key={definition.id} className="even:bg-gray-50">
+                      <TableData tableData={definition.name} />
+                      <TableData tableData={definition.description === null ? '' : definition.description} />
+                      <TableData tableData={definition.specification === null ? '' : definition.specification} />
+                      <TableData tableData={definition.units?.name} />
+                      <TableData tableData={definition.propertyBehavior} />
+                      <TableData tableData={definition.isArchived ? 'Yes' : 'No'} />
+                      <TableData tableData={definition.isHidden ? 'Yes' : 'No'} />
+                      <TableData tableData={definition.isReadOnly ? 'Yes' : 'No'} />
+                      <TableData tableData={definition.shouldCopy ? 'Yes' : 'No'} />
+                      <TableData
+                        actionItem={
+                          <>
+                            <Button disabled={loading} onClick={() => handleNav(definition)}>
+                              <UpdateIcon className="size-6 transition-transform duration-300 hover:scale-125" />
+                            </Button>
+                            <Button disabled={loading} onClick={() => handleArchivePropDef(definition.id)}>
+                              {loading ? (
+                                'Loading...'
+                              ) : (
+                                <ArchiveIcon className="size-6 cursor-pointer transition-transform duration-300 hover:scale-125" />
+                              )}
+                            </Button>
+                          </>
+                        }
+                      />
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>

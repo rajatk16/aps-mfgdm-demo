@@ -35,6 +35,16 @@ export const selectHasValidCredentials = createSelector(
   [selectClientId, selectClientSecret],
   (clientId, clientSecret) => Boolean(clientId && clientSecret)
 );
+export const selectGraphQLUrl = createSelector(selectCredentials, (credentials) => credentials.GRAPHQL_URL);
+export const selectBaseGroupId = createSelector(selectCredentials, (credentials) => credentials.BASE_GROUP_ID);
+export const selectBaseClientId = createSelector(selectCredentials, (credentials) => credentials.BASE_CLIENT_ID);
+export const selectBaseAccountId = createSelector(selectCredentials, (credentials) => credentials.BASE_ACCOUNT_ID);
+export const selectAPSCallbackUrl = createSelector(selectCredentials, (credentials) => credentials.APS_CALLBACK_URL);
+export const selectBaseUrl = createSelector(selectCredentials, (credentials) => credentials.BASE_URL);
+export const selectParameterServiceUrl = createSelector(
+  selectCredentials,
+  (credentials) => credentials.PARAMETER_SERVICE_URL
+);
 
 // Userprofile
 const selectUserProfile = (state: RootState) => state.userProfile;
