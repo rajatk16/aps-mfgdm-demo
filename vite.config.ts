@@ -4,6 +4,6 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 export default defineConfig({
   plugins: [react(), nodePolyfills()],
-  base: './aps-mfgdm-demo',
+  base: '/aps-mfgdm-demo',
   envPrefix: 'ADSK_'
 });
